@@ -84,11 +84,11 @@
                 </div>
             </div>
             <div>
-                <button class="ui button primary" type="submit" @click="logins()">登录</button>
+                <button class="ui button primary" type="submit" @click="logins()">登录&nbsp;<i class="fa-duotone fa-arrow-right-to-bracket"></i></button>
                 <template v-if="useNormalLogin == true"
                     ><button class="ui button teal" type="submit">忘记密码</button><button class="ui button black" type="submit">注册账户</button></template
                 >
-                <template v-if="useNormalLogin == false"><button class="ui button teal" type="submit" @click="openDialog">需要帮助？</button></template>
+                <template v-if="useNormalLogin == false"><button class="ui button teal" type="submit" @click="openDialog">需要帮助&nbsp;<i class="fa-duotone fa-circle-question"></i></button></template>
                 <div style="padding: 2px"></div>
                 <button disabled class="ui button blue" type="submit" style="background-color: #5b9ad5" @click="changeLoginMode">
                     {{ LoginModeButtonData }}
@@ -134,17 +134,17 @@ export default {
 			}
             axios({
                 method: "post",
-				url: "http://localhost:9000/api/user/luogu/vertify",
+				url: cookies.get("url")+"api/user/luogu/vertify",
 				data: {
 					"pasteid": pasteid.value
 				}
 			}).then((res) => {
 				if (res.data.user == undefined) {
-					toast(res.data.msg, "error", 2000)
+					toast("<i class='fa-duotone fa-exclamation'></i>&nbsp;" + res.data.msg, "error", 2000)
 				} else {
-					toast(res.data.msg, "success", 2000)
-					cookies.set("uid", res.data.user)
-					cookies.set("token", res.data.token)
+					toast("<i class='fa-duotone fa-check'></i>&nbsp;" + res.data.msg, "success", 2000)
+					cookies.set("uid", res.data.user, 1000000)
+					cookies.set("token", res.data.token, 1000000)
 				}
             });
 		}
@@ -152,7 +152,7 @@ export default {
         function getStart() {
             axios({
                 method: "get",
-                url: "http://localhost:9000/api/user/luogu/start",
+                url: cookies.get("url")+"api/user/luogu/start",
             }).then((res) => {
                 loginVCode.value = res.data.id;
             });

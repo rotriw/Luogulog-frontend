@@ -3,7 +3,7 @@
         <div
             class="left-image"
             style="
-                background-image: url('https://cdn.pixabay.com/photo/2013/11/28/10/03/river-219972_1280.jpg');
+                background-image: url('https://img1.imgtp.com/2022/06/23/nwlYCfNb.jpg');
                 background-repeat: no-repeat;
                 position: absolute;
                 height: 100%;
@@ -23,7 +23,7 @@
 			<p>LuoguLog(洛谷帖子保存站) 新站使用Vue + node.js + express完成。前端服务器位于香港。后端服务器位于上海。</p>
 			<p>主题框架选择了SemanticUI（社区更新版Fomantic）</p>
 			<p>前后端已全部开源，欢迎Star✨</p>
-			<div style="color: grey">Rotriw Dev Team &copy; 2022</div>
+			<div style="color: grey">Rotriw Dev Team in Beijing &copy; 2022<br>照片来源：北京十一晋元中学 于2022年中考生中考前夕2022.06.23晚间拍摄。</div>
         </div>
     </div>
 </template>

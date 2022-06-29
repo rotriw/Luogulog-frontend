@@ -76,6 +76,9 @@ export default ({
 		let route = useRoute();
 		useNav.value = false;
 		let logins = cookies.get("loginstatus") || false;
+		if (cookies.get("url") == undefined) {
+			cookies.set("url", "http://localhost:9000/", -1);
+		}
 		const isLogin = ref(logins);
 		function toast(message, classc, dptime) {
             $("body").toast({
@@ -88,7 +91,7 @@ export default ({
 		function refreshLoginStatus() {
 			axios({
                 method: "post",
-				url: "http://localhost:9000/api/user/vertify",
+				url: cookies.get("url")+"api/user/vertify",
 				data: {
 					"uid": cookies.get("uid"),
 					"token": cookies.get("token")

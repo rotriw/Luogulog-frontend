@@ -1,19 +1,19 @@
 <template>
     <div class="ui pagination menu">
         <a v-if="showPrevious() || currentPage <= 1" :class="{ disabled: currentPage <= 1 }" class="item" @click="changePage(1)">
-            {{ config.previousText }}
+            <i class="fa-duotone fa-angles-left"></i>
         </a>
         <a v-if="currentPage > 1" @click.prevent="changePage(currentPage - 1)" class="item">
-            {{ config.previousText }}
+			<i class="fa-duotone fa-angle-left"></i>
         </a>
         <a v-for="num in array" :class="{ active: num === currentPage }" class="item" @click.prevent="changePage(num)" :key="num">
             {{ num }}
         </a>
-        <a v-if="showNext() || currentPage === lastPage || lastPage === 0" :class="{ disabled: currentPage === lastPage || lastPage === 0 }" class="item">
-            {{ config.nextText }}
+        <a v-if="showNext() || currentPage === lastPage || lastPage === 1000" :class="{ disabled: currentPage === lastPage || lastPage === 0 }" class="item">
+            <i class="fa-duotone fa-angle-right"></i>
         </a>
         <a v-if="currentPage < lastPage" @click.prevent="changePage(currentPage + 1)" class="item">
-            {{ config.nextText }}
+            <i class="fa-duotone fa-angle-right"></i>
         </a>
 		<div class="item">
 			<div class="ui input"><input type="text" v-model="currentPage" @keyup.enter="changePage(currentPage)" @change="changePage(currentPage)" placeholder="Goto" /></div>
