@@ -26,7 +26,8 @@
                 <div class="wide column">
                     <div style="width: 100%; margin-bottom: 5px">
                         <h4 class="ui block top attached header" style="width: 100%; background-color: white; color: black">
-                            <div class="content">{{ authorS }} · {{ formatDate(timeS) }}</div>
+                            <div class="content">{{ authorS }} · {{ formatDate(timeS) }} · </div>
+							<a v-on:click="changeVis(1)">&nbsp;折叠/展开帖子详情</a>
                         </h4>
                         <div class="ui bottom attached segment" style="width: 100%; padding-top: 20px; padding-bottom: 20px ;">
                             <div v-html="contentS"></div>
@@ -64,7 +65,7 @@
 							</div> -->
                         </div>
                     </template>
-                    <Pagination :total="20" style="width: 100%" :callback="changePage" :curret="actives"></Pagination>
+                    <Pagination :total="10" style="width: 100%" :callback="changePage" :curret="actives"></Pagination>
                 </div>
             </div>
         </div>
@@ -108,6 +109,7 @@ import katex from "katex";
 import "katex/dist/katex.css";
 // 引入katex下的自动渲染函数
 import renderMathInElement from "katex/contrib/auto-render/auto-render";
+import { useStorage } from "vue3-storage";
 
 // import {PageIn} from "../components/page.vue";
 // import Page from '../components/page.vue';
@@ -117,7 +119,8 @@ export default {
         Pagination,
     },
     setup(props, ctx) {
-        const { cookies } = useCookies();
+		const { cookies } = useCookies();
+		const storage = useStorage();
         function toast(message, classc, dptime) {
             $("body").toast({
                 class: classc,
@@ -135,7 +138,35 @@ export default {
         const commit = ref({});
         const loadingRef = ref(false);
         const authorS = ref("discuss.author.name");
-        const iDs = ref(router.params.id);
+		const iDs = ref(router.params.id);
+		
+		let vis = localStorage.getItem("vis" + iDs.value), datas = contentS.value;
+		if (vis == null) {
+			localStorage.setItem("vis" + iDs.value, true)
+			vis = true
+		}
+		console.log(vis);
+		console.log(vis);
+
+		function changeVis(bs) {
+			if (bs == 1) {
+				console.log("@3333");
+				vis = !vis;
+			}
+			//vis = !vis;
+		//	console.log(vis);
+			localStorage.setItem("vis" + iDs.value, vis)
+		//	console.log(localStorage.getItem("vis" + iDs));
+		//	console.log(vis == true)
+			if (vis == "true") vis = true
+			else if (vis == "false") vis = false;
+			if (vis == true) {
+				contentS.value = datas;
+			} else {
+				datas = contentS.value;
+				contentS.value = "<span style='color: grey;font-style:italic'>已折叠</span>";
+			}
+		}
         async function refresh() {
             page = parseInt(router.query.page || 1);
             await axios({
@@ -155,7 +186,8 @@ export default {
                     throwOnError: true,
 				};
 				nextTick().then(() => {
-					renderMathInElement(document.body, renderOption);
+					if (commit.length > 0)
+						renderMathInElement(document.body, renderOption);
 				})
             });
             axios({
@@ -168,6 +200,9 @@ export default {
                 contentS.value = res.data.content;
                 authorS.value = res.data.authorName;
                 //	renders();
+				datas = contentS.value;
+				console.log(vis+"aw");
+				changeVis(0);
             });
             //	renders();
         }
@@ -180,7 +215,7 @@ export default {
             actives.value = i;
             console.log(links);
             router2.push(links);
-        }
+		}
         refresh();
         return {
             toast,
@@ -190,9 +225,11 @@ export default {
             contentS,
             titleS,
             commit,
-            iDs,
+			iDs,
+			vis,
             authorS,
-            loadingRef,
+			loadingRef,
+			changeVis,
             refresh,
             formatDate: function (value) {
                 let date = new Date(value);

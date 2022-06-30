@@ -6,9 +6,9 @@
         <a v-if="currentPage > 1" @click.prevent="changePage(currentPage - 1)" class="item">
 			<i class="fa-duotone fa-angle-left"></i>
         </a>
-        <a v-for="num in array" :class="{ active: num === currentPage }" class="item" @click.prevent="changePage(num)" :key="num">
-            {{ num }}
-        </a>
+        <a v-for="num in array" :class="{ 'active': num === currentPage }" class="item" @click.prevent="changePage(num)">
+        {{ num }}
+      	</a>
         <a v-if="showNext() || currentPage === lastPage || lastPage === 1000" :class="{ disabled: currentPage === lastPage || lastPage === 0 }" class="item">
             <i class="fa-duotone fa-angle-right"></i>
         </a>
