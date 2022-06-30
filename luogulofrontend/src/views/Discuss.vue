@@ -14,10 +14,11 @@
                 </div>
                 <div style="height: 15px"></div>
                 <div style="font-size: 15px">
-                    <span data-tooltip="更新数据" data-variation="basic" data-position="bottom left"><i class="fa-duotone fa-up-from-bracket"></i></span
-                    >&nbsp;<span data-variation="basic" data-tooltip="刷新界面" data-position="bottom left"><i class="fa-duotone fa-arrows-rotate"></i></span
-                    >&nbsp;<span data-tooltip="返回原帖" data-variation="basic" data-position="bottom left"><i class="fa-duotone fa-send-backward"></i></span
-                    >&nbsp;<span data-tooltip="举报" data-variation="basic" data-position="bottom left"><i class="fa-duotone fa-flag"></i></span>
+                    <div data-tooltip="更新数据" data-variation="basic" data-position="bottom left"><i class="fa-duotone fa-up-from-bracket"></i></div
+                    >&nbsp;<div data-variation="basic" data-tooltip="刷新界面" data-position="bottom left"><i class="fa-duotone fa-arrows-rotate"></i></div
+                    >&nbsp;<div data-tooltip="返回原帖" data-variation="basic" data-position="bottom left"><i class="fa-duotone fa-send-backward"></i></div
+                    >&nbsp;<div data-tooltip="举报" data-variation="basic" data-position="bottom left" @click="report()"><i class="fa-duotone fa-flag"></i></div>
+                    <!--display需要改成inline，也许需要在css部分改？-->
                 </div>
                 <div style="height: 15px"></div>
             </div>
@@ -26,8 +27,7 @@
                 <div class="wide column">
                     <div style="width: 100%; margin-bottom: 5px">
                         <h4 class="ui block top attached header" style="width: 100%; background-color: white; color: black">
-                            <div class="content">{{ authorS }} · {{ formatDate(timeS) }} · </div>
-							<a v-on:click="changeVis(1)">&nbsp;折叠/展开帖子详情</a>
+                            <div class="content">{{ authorS }} · {{ formatDate(timeS) }}</div>
                         </h4>
                         <div class="ui bottom attached segment" style="width: 100%; padding-top: 20px; padding-bottom: 20px ;">
                             <div v-html="contentS"></div>
@@ -65,7 +65,7 @@
 							</div> -->
                         </div>
                     </template>
-                    <Pagination :total="10" style="width: 100%" :callback="changePage" :curret="actives"></Pagination>
+                    <Pagination :total="20" style="width: 100%" :callback="changePage" :curret="actives"></Pagination>
                 </div>
             </div>
         </div>
@@ -109,7 +109,6 @@ import katex from "katex";
 import "katex/dist/katex.css";
 // 引入katex下的自动渲染函数
 import renderMathInElement from "katex/contrib/auto-render/auto-render";
-import { useStorage } from "vue3-storage";
 
 // import {PageIn} from "../components/page.vue";
 // import Page from '../components/page.vue';
@@ -119,8 +118,7 @@ export default {
         Pagination,
     },
     setup(props, ctx) {
-		const { cookies } = useCookies();
-		const storage = useStorage();
+        const { cookies } = useCookies();
         function toast(message, classc, dptime) {
             $("body").toast({
                 class: classc,
@@ -138,35 +136,7 @@ export default {
         const commit = ref({});
         const loadingRef = ref(false);
         const authorS = ref("discuss.author.name");
-		const iDs = ref(router.params.id);
-		
-		let vis = localStorage.getItem("vis" + iDs.value), datas = contentS.value;
-		if (vis == null) {
-			localStorage.setItem("vis" + iDs.value, true)
-			vis = true
-		}
-		console.log(vis);
-		console.log(vis);
-
-		function changeVis(bs) {
-			if (bs == 1) {
-				console.log("@3333");
-				vis = !vis;
-			}
-			//vis = !vis;
-		//	console.log(vis);
-			localStorage.setItem("vis" + iDs.value, vis)
-		//	console.log(localStorage.getItem("vis" + iDs));
-		//	console.log(vis == true)
-			if (vis == "true") vis = true
-			else if (vis == "false") vis = false;
-			if (vis == true) {
-				contentS.value = datas;
-			} else {
-				datas = contentS.value;
-				contentS.value = "<span style='color: grey;font-style:italic'>已折叠</span>";
-			}
-		}
+        const iDs = ref(router.params.id);
         async function refresh() {
             page = parseInt(router.query.page || 1);
             await axios({
@@ -186,8 +156,7 @@ export default {
                     throwOnError: true,
 				};
 				nextTick().then(() => {
-					if (commit.length > 0)
-						renderMathInElement(document.body, renderOption);
+					renderMathInElement(document.body, renderOption);
 				})
             });
             axios({
@@ -200,9 +169,6 @@ export default {
                 contentS.value = res.data.content;
                 authorS.value = res.data.authorName;
                 //	renders();
-				datas = contentS.value;
-				console.log(vis+"aw");
-				changeVis(0);
             });
             //	renders();
         }
@@ -215,8 +181,16 @@ export default {
             actives.value = i;
             console.log(links);
             router2.push(links);
-		}
+        }
         refresh();
+        function report(){
+            axios({
+                method: "post",
+                url: cookies.get("url") + "api/report",
+            });
+            console.log("run");
+        }
+        //report();
         return {
             toast,
             changePage,
@@ -225,12 +199,11 @@ export default {
             contentS,
             titleS,
             commit,
-			iDs,
-			vis,
+            iDs,
             authorS,
-			loadingRef,
-			changeVis,
+            loadingRef,
             refresh,
+            report,
             formatDate: function (value) {
                 let date = new Date(value);
                 let y = date.getFullYear();
